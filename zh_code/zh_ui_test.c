@@ -647,39 +647,98 @@ void Zh_Demo_Create(void)
 }
 #elif ZH_DEMO_PATH_VECTOR
 
-#define CANVAS_WIDTH  150
-#define CANVAS_HEIGHT 150
+#define LINE_NUM_MAX  24
+#define CURVE_CTRL_DIS (40)
+#define CURVE_OFFSET_X (10) // 天气曲线X轴偏移（曲线起始位置与文字对齐）
+#define CURVE_STROKE_W (5) // 天气曲线线宽
+#define CURVE_CANVAS_H (160) // 天气曲线Canvas高度
 
-static lv_fpoint_t pts[3] = {{10, 10}, {130, 130}, {10, 130}};
+static lv_draw_buf_t* canvas_draw_buf = NULL;
+static lv_point_precise_t line_points[]
+    = { { 0, 0 },       { 90, 60 },      { 90 * 2, 120 },  { 90 * 3, 60 },
+        { 90 * 4, 0 },  { 90 * 5, 120 },  { 90 * 6, 0 },  { 90 * 7, 60 },
+        { 90 * 8, 60 },  { 90 * 9, 60 },  { 90 * 10, 60 }, { 90 * 11, 60 },
+        { 90 * 12, 60 }, { 90 * 13, 60 }, { 90 * 14, 60 }, { 90 * 15, 60 },
+        { 90 * 16, 60 }, { 90 * 17, 60 }, { 90 * 18, 60 }, { 90 * 19, 60 },
+        { 90 * 20, 60 }, { 90 * 21, 60 }, { 90 * 22, 60 }, { 90 * 23, 60 } };
+
+int random_in_range(int min, int max)
+{
+	return min + rand() % (max - min + 1);
+}
+
 void Zh_Demo_Create(void)
 {
-	/*Create a buffer for the canvas*/
-    LV_DRAW_BUF_DEFINE(draw_buf, CANVAS_WIDTH, CANVAS_HEIGHT, LV_COLOR_FORMAT_ARGB8888);
+	for (size_t i = 0; i < sizeof(line_points) / sizeof(lv_point_precise_t); i++)
+	{
+		line_points[i].y += random_in_range(-40, 40);
+	}
 
-	/*Create a canvas and initialize its palette*/
+	lv_obj_set_style_bg_color(lv_screen_active(), lv_color_black(), 0);
+
+	int canvas_width = LINE_NUM_MAX * 90 + 32 + 24;
+	canvas_draw_buf = lv_draw_buf_create(
+		canvas_width, CURVE_CANVAS_H, LV_COLOR_FORMAT_ARGB8888, LV_STRIDE_AUTO);
+	lv_draw_buf_clear(canvas_draw_buf, NULL);
+
 	lv_obj_t *canvas = lv_canvas_create(lv_screen_active());
-	lv_canvas_set_draw_buf(canvas, &draw_buf);
-	lv_canvas_fill_bg(canvas, lv_color_hex3(0xccc), LV_OPA_COVER);
-	lv_obj_center(canvas);
+	lv_canvas_set_draw_buf(canvas, canvas_draw_buf);
+	lv_obj_set_style_border_width(canvas, 2, 0);
+	lv_obj_set_style_border_color(canvas, lv_color_hex(0x00FF00), 0);
 
 	lv_layer_t layer;
 	lv_canvas_init_layer(canvas, &layer);
 
 	lv_vector_dsc_t *dsc = lv_vector_dsc_create(&layer);
+
 	lv_vector_path_t *path = lv_vector_path_create(LV_VECTOR_PATH_QUALITY_MEDIUM);
 
-	lv_vector_path_move_to(path, &pts[0]);
-	lv_vector_path_line_to(path, &pts[1]);
-	lv_vector_path_line_to(path, &pts[2]);
-	lv_vector_path_close(path);
+	int point_x = 0;
+	int point_y = line_points[0].y;
+	lv_fpoint_t start_point = {point_x, point_y};
+	lv_vector_path_move_to(path, &start_point);
+	for (int j = 0; j < LINE_NUM_MAX; j++)
+	{
+		int next_point_x, next_point_y;
+		if (j > LINE_NUM_MAX)
+		{
+			next_point_x = canvas_width;
+			next_point_y = line_points[LINE_NUM_MAX].y;
+		}
+		else
+		{
+			next_point_x = line_points[j].x + 90;
+			next_point_y = line_points[j].y;
+		}
+		if (next_point_y <= 0)
+		{
+			next_point_y = CURVE_STROKE_W;
+		}
+		int delta_y = next_point_y - point_y;
+		lv_fpoint_t next_point[] = {
+			{point_x + CURVE_CTRL_DIS, point_y},			// Control point 1
+			{next_point_x - CURVE_CTRL_DIS, next_point_y}, // Control point 2
+			{next_point_x, next_point_y}									// Taget point
+		};
+		printf("control_1=%" PRIi16 ",%" PRIi16 " control_2=%" PRIi16
+					",%" PRIi16 " target==%" PRIi16 ",%" PRIi16 "\r\n",
+					point_x + CURVE_CTRL_DIS, point_y,
+					next_point_x - CURVE_CTRL_DIS, next_point_y, next_point_x,
+					next_point_y);
+		lv_vector_path_cubic_to(path, &next_point[0], &next_point[1],
+								&next_point[2]);
+		point_x = next_point_x;
+		point_y = next_point_y;
+	}
 
-	lv_vector_dsc_set_fill_color(dsc, lv_color_make(0x00, 0x80, 0xff));
+	lv_vector_dsc_set_stroke_color(dsc, lv_color_hex(0xff0000));
+	lv_vector_dsc_set_stroke_width(dsc, CURVE_STROKE_W);
+	lv_vector_dsc_set_stroke_opa(dsc, LV_OPA_100);
+	lv_vector_dsc_set_fill_opa(dsc, LV_OPA_0);
 	lv_vector_dsc_add_path(dsc, path);
-
 	lv_draw_vector(dsc);
 	lv_vector_path_delete(path);
 	lv_vector_dsc_delete(dsc);
-
 	lv_canvas_finish_layer(canvas, &layer);
 }
 #else 
