@@ -647,7 +647,7 @@
 
 #define LV_USE_ROLLER     0//changed by wjs   /*Requires: lv_label*/
 
-#define LV_USE_SCALE      0//changed by wjs
+#define LV_USE_SCALE      1
 
 #define LV_USE_SLIDER     0//changed by wjs   /*Requires: lv_bar*/
 

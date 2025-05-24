@@ -9,7 +9,7 @@ typedef struct
 Zh_Demo_Data_t zh_demo_data;
 
 #define ZH_DEMO_CONT 0
-#define ZH_DEMO_IMG 0
+#define ZH_DEMO_IMG 1
 #define ZH_DEMO_LABEL 0
 #define ZH_DEMO_BUTTON 0
 #define ZH_DEMO_BASE_PAGE 0
@@ -74,15 +74,25 @@ void Zh_Demo_Create(void)
 #elif ZH_DEMO_IMG
 void Zh_Demo_Create(void)
 {
-	lv_obj_t *img = zh_img_create(lv_scr_act(), NULL, LV_ALIGN_CENTER, 0, 0, &emoji_F617_2);
-	lv_obj_center(img);
-	// lv_image_set_src(img, LV_SYMBOL_DUMMY "Some text");//文本以图片形式展现
-	// lv_image_set_scale(img, 128);	  // 缩放图片zoom
-	// lv_image_set_rotation(img, 1800); // 旋转图片180度
-	// lv_image_set_pivot(img, 0, 0);	  // 设置图片旋转中心,默认为图片中心
-	// lv_image_set_antialias(img, true); // 抗锯齿
-	lv_obj_set_style_image_recolor_opa(img, LV_OPA_70, LV_PART_MAIN);//设置图片透明度
-    lv_obj_set_style_image_recolor(img, lv_palette_main(LV_PALETTE_BLUE),LV_PART_MAIN);//设置图片颜色
+    lv_obj_t* cont = zh_cont_create(lv_scr_act(), NULL, LV_ALIGN_CENTER, 0, 0, 60, 60, NULL);
+    lv_obj_center(cont);
+    lv_obj_set_style_radius(cont, 30, 0);
+    lv_obj_set_style_clip_corner(cont, true, 0);
+    lv_obj_set_style_border_color(cont, lv_palette_main(LV_PALETTE_ORANGE), LV_PART_MAIN);
+    lv_obj_set_style_border_width(cont, 1, LV_PART_MAIN);
+
+    lv_obj_t* img = zh_img_create(cont, NULL, LV_ALIGN_CENTER, 0, 0, &test_arc_bg22);
+    lv_image_set_scale(img, 60 * LV_SCALE_NONE / 100);
+    lv_obj_center(img);
+    // lv_obj_set_size(img, 36, 36);
+    // lv_obj_set_style_clip_corner(img, true, 0);  // 确保启用裁剪
+    // lv_image_set_src(img, LV_SYMBOL_DUMMY "Some text");//文本以图片形式展现
+    // lv_image_set_scale(img, 128);	  // 缩放图片zoom
+    // lv_image_set_rotation(img, 1800); // 旋转图片180度
+    // lv_image_set_pivot(img, 0, 0);	  // 设置图片旋转中心,默认为图片中心
+    // lv_image_set_antialias(img, true); // 抗锯齿
+    // lv_obj_set_style_image_recolor_opa(img, LV_OPA_70, LV_PART_MAIN);//设置图片透明度
+    // lv_obj_set_style_image_recolor(img, lv_palette_main(LV_PALETTE_BLUE),LV_PART_MAIN);//设置图片颜色
 
 #if 0// 重设图片框的背景颜色与大小，设置图片在图片框内的y偏移量
 	static lv_style_t style;
