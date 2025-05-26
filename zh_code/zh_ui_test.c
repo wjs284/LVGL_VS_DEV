@@ -9,7 +9,7 @@ typedef struct
 Zh_Demo_Data_t zh_demo_data;
 
 #define ZH_DEMO_CONT 0
-#define ZH_DEMO_IMG 1
+#define ZH_DEMO_IMG 0
 #define ZH_DEMO_LABEL 0
 #define ZH_DEMO_BUTTON 0
 #define ZH_DEMO_BASE_PAGE 0
@@ -20,7 +20,9 @@ Zh_Demo_Data_t zh_demo_data;
 #define ZH_DEMO_CANVAS 0
 #define ZH_DEMO_FLEX_PAGE 0
 #define ZH_DEMO_WEATHER_LINE 0
-#define ZH_DEMO_PATH_VECTOR 1
+#define ZH_DEMO_PATH_VECTOR 0
+#define ZH_DEMO_TEST_SPAN 1
+
 static void btn_event_cb(lv_event_t *e)
 {
 	lv_obj_t *btn = lv_event_get_target(e);
@@ -85,7 +87,6 @@ void Zh_Demo_Create(void)
     lv_image_set_scale(img, 60 * LV_SCALE_NONE / 100);
     lv_obj_center(img);
     // lv_obj_set_size(img, 36, 36);
-    // lv_obj_set_style_clip_corner(img, true, 0);  // 确保启用裁剪
     // lv_image_set_src(img, LV_SYMBOL_DUMMY "Some text");//文本以图片形式展现
     // lv_image_set_scale(img, 128);	  // 缩放图片zoom
     // lv_image_set_rotation(img, 1800); // 旋转图片180度
@@ -750,6 +751,42 @@ void Zh_Demo_Create(void)
 	lv_vector_path_delete(path);
 	lv_vector_dsc_delete(dsc);
 	lv_canvas_finish_layer(canvas, &layer);
+}
+#elif ZH_DEMO_TEST_SPAN
+void Zh_Demo_Create(void)
+{
+    lv_obj_t* spans = lv_spangroup_create(lv_screen_active());
+    lv_obj_set_width(spans, 300);
+    lv_obj_set_height(spans, 300);
+    lv_obj_center(spans);
+
+    lv_spangroup_set_align(spans, LV_TEXT_ALIGN_LEFT);
+    lv_spangroup_set_overflow(spans, LV_SPAN_OVERFLOW_CLIP);
+    lv_spangroup_set_indent(spans, 20);
+    lv_spangroup_set_mode(spans, LV_SPAN_MODE_BREAK);
+
+    lv_span_t* span = lv_spangroup_new_span(spans);
+    lv_span_set_text(span, "China is a beautiful country.");
+    lv_style_set_text_color(lv_span_get_style(span), lv_palette_main(LV_PALETTE_RED));
+    lv_style_set_text_decor(lv_span_get_style(span), LV_TEXT_DECOR_UNDERLINE);
+    lv_style_set_text_opa(lv_span_get_style(span), LV_OPA_50);
+
+    span = lv_spangroup_new_span(spans);
+    lv_span_set_text_static(span, "good good study, day day up.");
+	
+    span = lv_spangroup_new_span(spans);
+    lv_span_set_text_static(span, "LVGL is an open-source graphics library.");
+    lv_style_set_text_color(lv_span_get_style(span), lv_palette_main(LV_PALETTE_BLUE));
+
+    span = lv_spangroup_new_span(spans);
+    lv_span_set_text_static(span, "the boy no name.");
+    lv_style_set_text_color(lv_span_get_style(span), lv_palette_main(LV_PALETTE_GREEN));
+
+    span = lv_spangroup_new_span(spans);
+    lv_span_set_text(span, "I have a dream that hope to come true.");
+    lv_style_set_text_decor(lv_span_get_style(span), LV_TEXT_DECOR_STRIKETHROUGH);
+
+    lv_spangroup_refr_mode(spans);
 }
 #else 
 void Zh_Demo_Create(void)

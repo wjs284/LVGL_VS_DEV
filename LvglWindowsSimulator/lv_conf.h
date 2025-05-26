@@ -616,7 +616,7 @@
 
 #define LV_USE_CHART      1
 
-#define LV_USE_CHECKBOX   0//changed by wjs
+#define LV_USE_CHECKBOX   1
 
 #define LV_USE_DROPDOWN   0//changed by wjs   /*Requires: lv_label*/
 
@@ -633,11 +633,11 @@
     #define LV_LABEL_WAIT_CHAR_COUNT 3  /*The count of wait chart*/
 #endif
 
-#define LV_USE_LED        0//changed by wjs
+#define LV_USE_LED        1
 
 #define LV_USE_LINE       1
 
-#define LV_USE_LIST       0//changed by wjs
+#define LV_USE_LIST       1
 
 #define LV_USE_LOTTIE     0  /*Requires: lv_canvas, thorvg */
 
@@ -645,36 +645,36 @@
 
 #define LV_USE_MSGBOX     0//changed by wjs
 
-#define LV_USE_ROLLER     0//changed by wjs   /*Requires: lv_label*/
+#define LV_USE_ROLLER     1   /*Requires: lv_label*/
 
 #define LV_USE_SCALE      1
 
-#define LV_USE_SLIDER     0//changed by wjs   /*Requires: lv_bar*/
+#define LV_USE_SLIDER     1   /*Requires: lv_bar*/
 
-#define LV_USE_SPAN       0//changed by wjs
+#define LV_USE_SPAN       1
 #if LV_USE_SPAN
     /*A line text can contain maximum num of span descriptor */
     #define LV_SPAN_SNIPPET_STACK_SIZE 64
 #endif
 
-#define LV_USE_SPINBOX    0//changed by wjs
+#define LV_USE_SPINBOX    1
 
-#define LV_USE_SPINNER    0//changed by wjs
+#define LV_USE_SPINNER    1
 
-#define LV_USE_SWITCH     0//changed by wjs
+#define LV_USE_SWITCH     1
 
-#define LV_USE_TEXTAREA   0//changed by wjs   /*Requires: lv_label*/
+#define LV_USE_TEXTAREA   1   /*Requires: lv_label*/
 #if LV_USE_TEXTAREA != 0
     #define LV_TEXTAREA_DEF_PWD_SHOW_TIME 1500    /*ms*/
 #endif
 
-#define LV_USE_TABLE      0//changed by wjs
+#define LV_USE_TABLE      1
 
-#define LV_USE_TABVIEW    0//changed by wjs
+#define LV_USE_TABVIEW    1
 
-#define LV_USE_TILEVIEW   0//changed by wjs
+#define LV_USE_TILEVIEW   1
 
-#define LV_USE_WIN        0//changed by wjs
+#define LV_USE_WIN        1
 
 /*==================
  * THEMES
