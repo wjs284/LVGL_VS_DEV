@@ -51,11 +51,13 @@ static void lv_img_bar_constructor(const lv_obj_class_t* class_p, lv_obj_t* obj)
 
     lv_img_bar_t* img_bar = (lv_img_bar_t*)obj;
     LV_ASSERT(img_bar);
-    img_bar->last_ret = HIDDEN_RULE_INVALID;
 
-    img_bar->bar_img = NULL;     
+    lv_obj_set_layout(img_bar, LV_LAYOUT_NONE);
+
+    img_bar->last_ret = HIDDEN_RULE_INVALID;
+    img_bar->bar_img = NULL;
     img_bar->indicator_img = NULL;
-    img_bar->dir = BAR_DIR_LEFT_TO_RIGHT; 
+    img_bar->dir = BAR_DIR_LEFT_TO_RIGHT;
 
     LV_TRACE_OBJ_CREATE("finished");
 }
@@ -120,7 +122,7 @@ static void refresh_handle(lv_obj_t* img, int32_t ret)
     // if (baseobj->data_type == DATABASE_TYPE_Q24_8)
     //     ret_int = (int32_t)Q24_Q_TO_DOUBLE(ret);
     // else
-        ret_int = ret;
+    ret_int = ret;
 
     if (ret_int > baseobj->value_max)
         size = ori_size;
@@ -130,25 +132,21 @@ static void refresh_handle(lv_obj_t* img, int32_t ret)
         size = (ret_int - baseobj->value_min) * ori_size / (baseobj->value_max - baseobj->value_min);
 
     if (BAR_DIR_LEFT_TO_RIGHT == img_bar->dir) {
-        lv_obj_set_width(img, size);
-        if (img_bar->indicator_img)
-            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_OUT_RIGHT_MID, -(lv_obj_get_width(img_bar->indicator_img) >> 1), 0);
+        if (img_bar->indicator_img) {
+            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_LEFT_MID, -(ori_size - size), 0);
+        }
     } else if (BAR_DIR_RIGTH_TO_LEFT == img_bar->dir) {
-        lv_obj_set_width(img, size);
-        lv_obj_set_x(img, ori_size - size);
-        lv_obj_set_x(img_bar->bar_img, -ori_size + size);
-        if (img_bar->indicator_img)
-            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_OUT_LEFT_MID, (lv_obj_get_width(img_bar->indicator_img) >> 1), 0);
+        if (img_bar->indicator_img) {
+            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_RIGHT_MID, ori_size - size, 0);
+        }
     } else if (BAR_DIR_TOP_TO_BOTTOM == img_bar->dir) {
-        lv_obj_set_height(img, size);
-        if (img_bar->indicator_img)
-            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_OUT_BOTTOM_MID, 0, -(lv_obj_get_height(img_bar->indicator_img) >> 1));
+        if (img_bar->indicator_img) {
+            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_TOP_MID, 0, size - ori_size);
+        }
     } else if (BAR_DIR_BOTTOM_TO_TOP == img_bar->dir) {
-        lv_obj_set_height(img, size);
-        lv_obj_set_y(img, ori_size - size);
-        lv_obj_set_y(img_bar->bar_img, -ori_size + size);
-        if (img_bar->indicator_img)
-            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_OUT_TOP_MID, 0, (lv_obj_get_height(img_bar->indicator_img) >> 1));
+        if (img_bar->indicator_img) {
+            lv_obj_align_to(img_bar->indicator_img, img, LV_ALIGN_BOTTOM_MID, 0, ori_size - size);
+        }
     }
 }
 
@@ -211,6 +209,7 @@ void lv_img_bar_set_src(lv_obj_t* img, const void* src_img)
         img_bar->bar_img = lv_image_create(img);
     }
     lv_image_set_src(img_bar->bar_img, src_img);
+    lv_obj_update_layout(img_bar->bar_img);
     lv_obj_set_size(img, lv_obj_get_width(img_bar->bar_img), lv_obj_get_height(img_bar->bar_img));
     lv_baseobj_set_ori_size(img, lv_obj_get_width(img_bar->bar_img), lv_obj_get_height(img_bar->bar_img));
 }
@@ -230,7 +229,7 @@ void lv_img_bar_set_indicator_src(lv_obj_t* img, const void* src_img)
     LV_ASSERT(img_bar);
 
     if (NULL == img_bar->indicator_img) {
-        img_bar->indicator_img = lv_image_create(img);//TODO
+        img_bar->indicator_img = lv_image_create(img); // TODO
     }
     lv_image_set_src(img_bar->indicator_img, src_img);
 }
